@@ -9,7 +9,7 @@ const StarRating = React.memo(({size,star_R,rating,setRating}) => {
     {[...Array(5)].map((star,i) => {
         const ratingValue = i + 1
       return <label key={i}>
-       <input type="radio" name="starRating" id="star" className='hidden' value={ratingValue} onClick={()=>setRating(ratingValue)} />
+       <input type="radio" name="starRating" id="star" className='hidden' value={ratingValue} onClick={()=>setRating(ratingValue)|| null} />
           <FaStar size={size || 30} className={`cursor-pointer ${ratingValue <= (star_R || hoveredValue || rating) ? 'text-orange-500' : 'text-yellow-800'}`}
          style={{transition:'color 200ms'}}
           onMouseEnter={()=>setHoveredValue(ratingValue)}

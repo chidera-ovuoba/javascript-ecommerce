@@ -3,7 +3,7 @@ import { useGlobalContext } from '../lib/context';
 import { Link, useNavigate } from 'react-router-dom';
 import { signup } from '../lib/firebase';
 import Loader from '../components/Loader';
-import Snackbar from '../components/Snackbar';
+import ErrorSnackbar from '../components/ErrorSnackbar';
 import SignWIthGoogle from '../components/SignWIthGoogle';
 
 
@@ -55,7 +55,7 @@ const SignUp = ({setNameInitialsArr}) => {
                
            <button type='submit' className='bg-orange-500 mt-4 text-orange-800 font-medium  text-center text-md text-white p-3 rounded-lg place-self-start mb-5 flex justify-center items-center gap-2'>REGISTER {loading && <Loader color={'green'}/>}</button>
           {
-            errorText && <Snackbar errorText={errorText}  />
+            errorText && <ErrorSnackbar errorText={errorText}  />
           }
         </form>
         <SignWIthGoogle/>

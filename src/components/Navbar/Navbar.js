@@ -75,7 +75,7 @@ const Navbar = ({nameInitialsArr,setNameInitialsArr}) => {
                                 <div className={userImage != 'null' && userImage  ? 'hidden':'text-xl font-bold uppercase'} id='image_profileName'>{nameInitialsArr.length > 1 ? nameInitialsArr?.[0]?.charAt(0).concat(nameInitialsArr?.[1]?.charAt(0)) : nameInitialsArr?.[0]?.slice(0, 2)}{!nameInitialsArr?.[0] && <FaUserAlt />}</div>
                                 <img src={userImage} alt='userImg' className={userImage != 'null' && userImage  ? 'w-full h-full rounded-full img userImage': 'hidden'} />
                             </div>
-                            {profileImgLoading && <Loader w={'2rem'} h={'2rem'} color={'red'}/>}
+                            {profileImgLoading && <Loader h='h-[2rem] xs:h-[1rem]' w='w-[2rem] xs:w-[1rem]' color='red' />}
                         {openLogout && <div className='fixed top-[5rem] w-[8rem] bg-white -right-[2rem] -translate-x-1/2 grid place-items-center gap-4 py-4 shadow-md text-white text-sm  rounded-sm'>
                         {
                             auth.currentUser ?

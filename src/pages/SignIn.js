@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { auth, login, showError } from '../lib/firebase';
 import { AiFillCheckCircle } from 'react-icons/ai';
 import { sendPasswordResetEmail } from 'firebase/auth';
-import Snackbar from '../components/Snackbar';
+import ErrorSnackbar from '../components/ErrorSnackbar';
 import Loader from '../components/Loader';
 import SignWIthGoogle from '../components/SignWIthGoogle';
 const SignIn = ({setNameInitialsArr}) => {
@@ -69,7 +69,7 @@ const SignIn = ({setNameInitialsArr}) => {
               <input type="email" className='ring-2 ring-yellow-800 outline-0 p-3 w-[18rem] sm:w-full rounded-lg' placeholder='Your Email Address' ref={passwordResetRef}/>
               <button type='submit' className='px-4 py-2 bg-orange-500 font-semibold text-md capitalize rounded-md'>submit</button>
               </form>
-              {error && <Snackbar errorText={error}/>}
+              {error && <ErrorSnackbar errorText={error}/>}
               {passWordLinkSent &&  <span className='bg-orange-500 p-3 font-semibold flex items-center gap-2 fixed top-[30%] w-[90%] max-w-[600px]'><AiFillCheckCircle size={20} />A link has been sent to your email follow the link to rest your password</span>}
               </span>
               </div>
