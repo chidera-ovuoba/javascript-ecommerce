@@ -22,7 +22,7 @@ const firebaseConfig = {
   
   
   
-export const handleSubmitReview = async(e,id,rating,text) => {
+export const handleSubmitReview = async(e,id,rating,text,message,commentExists) => {
   e.preventDefault();
   console.log('click')
   // const querySnapshot = await getDocs(collection(db, "users"));
@@ -49,10 +49,16 @@ export const handleSubmitReview = async(e,id,rating,text) => {
   
   // // Stop listening to changes
   // unsubscribe();
-
-try {
-  const docRef = doc(db, "users", auth.currentUser.uid);
-  await setDoc(docRef, {
+  if (!rating || !text) {
+    message({ error: true, message: `${!rating && !text ? 'rating and review comment have' : !rating && 'rating has' || !text && 'review comment has '} not been filled` })
+    return
+  }
+  
+  if (rating && text) {
+  
+    try {
+      const docRef = doc(db, "users", auth.currentUser.uid);
+      await setDoc(docRef, {
     ownerUID:auth.currentUser.uid
   },{merge:true})
   await setDoc(doc(db,`users/${docRef?.id}/comments`,id), {
@@ -62,10 +68,13 @@ try {
     rating:rating,
     text:text,
     timestamp: serverTimestamp()
-  });
+  }).then(() => { 
+    message({error:false,message:`Successfully ${commentExists ? 'Edited':'Submitted'} Review`})
+  })
   console.log("Document written with ID: ", docRef.id);
 } catch (e) {
   console.error("Error adding document: ", e);
+}
 }
   
 }

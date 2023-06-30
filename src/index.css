@@ -340,13 +340,13 @@ p.star {
     }
     
     25% {
-        top: 4rem;
+        top: 2rem;
     }
     50% {
         top: 4rem;
     }
     75% {
-        top: 4rem;
+        top: 8rem;
     }
     100% {
         top: -4rem;
