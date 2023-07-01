@@ -9,7 +9,7 @@ import Stripe from 'stripe';
 import { FaCartPlus, FaUserAlt } from 'react-icons/fa';
 import StarRating from '../components/StarRating';
 import { auth, db, handleSubmitReview } from '../lib/firebase';
-import { collectionGroup, doc, getDoc, getDocs, onSnapshot, query, where } from 'firebase/firestore';
+import { Timestamp, collectionGroup, doc, getDoc, getDocs, onSnapshot, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
 import Loader from '../components/Loader';
 import ErrorSnackbar from '../components/ErrorSnackbar';
 import SuccessSnackbar from '../components/SuccessSnackbar';
@@ -32,9 +32,9 @@ const SingleProduct = () => {
 
     // const nameInitialsArr = localStorage.getItem('username')?.split(' ');
     // const userImg = localStorage.getItem('userImg');
-
-    const timeFormat = (reviewTimestamp) => {
-
+    
+    const timeFormat = async(savedTimestamp,currentTimestamp) => {
+        
         const secondsMilli = 1000
         const minuteMilli = secondsMilli * 60;
         const hourMilli = minuteMilli * 60;
@@ -44,11 +44,16 @@ const SingleProduct = () => {
         const yearMilli = dayMilli * 365;
 
         // Divide Time with a year
-        const d = new Date();
-        let currentMilliTime = d.getTime()
-        
-        const savedMilliTime = new Date(reviewTimestamp * secondsMilli).getTime();
-        console.log(savedMilliTime,currentMilliTime)
+        // const d = new Date();
+        const docRef = doc(db, `users/${auth.currentUser?.uid}/comments`,id);
+        await updateDoc(docRef, {
+            currentTimestamp:serverTimestamp() 
+        })
+        let currentMilliTime = currentTimestamp * secondsMilli
+        const savedMilliTime = savedTimestamp * secondsMilli
+        // console.log(ServerValue,new Date(reviewTimestamp * secondsMilli))
+        // const savedMilliTime = new Date(reviewTimestamp * secondsMilli).getTime();
+        // console.log(new Date(reviewTimestamp * secondsMilli),d)
         let seconds = Math.floor((currentMilliTime - savedMilliTime) / secondsMilli)
         let minute = Math.floor((currentMilliTime - savedMilliTime) / minuteMilli)
         let hour = Math.floor((currentMilliTime - savedMilliTime) / hourMilli)
@@ -62,7 +67,7 @@ const SingleProduct = () => {
          return`${seconds} second${seconds === 1 ? '':'s'}`
         }
         if(minute > 0 && minute < 60){
-         return`${minute} minute${minute === 1 ? '':'s'}`
+            return`${minute} minute${minute === 1 ? '':'s'}`
         }
         if(hour > 0 && hour <  24){
          return`${hour} hour${hour === 1 ? '':'s'}`
@@ -119,16 +124,16 @@ const SingleProduct = () => {
             const querySnapshot = await getDocs(qSnap);
             // console.log(qSnap);
             // console.log(querySnapshot);
-        // const qSnap = query(collection(db, "cities"), where("state", "==", "CA"));
-        querySnapshot.forEach((doc) => {
+            // const qSnap = query(collection(db, "cities"), where("state", "==", "CA"));
+            querySnapshot.forEach((doc) => {
             console.log(doc.id, ' => ', doc.data());
         });
-    const docRef = doc(db, `users/${auth.currentUser.uid}/comments`,id);
+    const docRef = doc(db, `users/${auth.currentUser?.uid}/comments`,id);
     const docSnap = await getDoc(docRef);
     
         if (docSnap.exists()) {
             const { rating, text } = docSnap.data();
-            reviewRef.current.value = text;
+            reviewRef.current.value ??= text;
             setRating(rating);
             setUserCommentExists(true);
         console.log("Document data:", docSnap.data());
@@ -203,22 +208,18 @@ const SingleProduct = () => {
             
             {
                 comments ? 
-                comments.map(({imgUrl,timestamp,text,name,rating}) => {
+                comments.map(({imgUrl,savedTimestamp, currentTimestamp,text,name,rating},i) => {
                   const nameInitialsArr = name?.split(' ')
-
+                   console.log(savedTimestamp,currentTimestamp)
                     
-                return(<div className='grid gap-2 pb-8' key={timestamp?.seconds}>
+                return(<div className='grid gap-2 pb-8'>
                 <div className='flex flex-wrap items-center justify-between gap-2'>
                 <div className='w-[45px] h-[45px] bg-orange-500 grid place-items-center rounded-full mr-2'>
                 <div className={imgUrl != 'null' && imgUrl  ? 'hidden':'text-xl font-bold uppercase'} id='image_profileName'>{nameInitialsArr.length > 1 ? nameInitialsArr?.[0]?.charAt(0).concat(nameInitialsArr?.[1]?.charAt(0)) : nameInitialsArr?.[0]?.slice(0, 2)}{!nameInitialsArr?.[0] && <FaUserAlt />}
                     </div>
                 <img src={imgUrl} alt='userImg' className={imgUrl != 'null' && imgUrl  ? 'w-full h-full rounded-full img userImage': 'hidden'} />
                 </div>
-                <div className='grid gap-1 mr-auto'>
-                <span className='bold'>{name}</span>
-                <span className='flex gap-1'><StarRating size={20} star_R={rating} /></span>
-                </div> 
-                 <span className='font-bold self-end min-w-[110px]'>{timeFormat(timestamp?.seconds)} ago</span>
+                
                 </div>
                 <p>{text}</p>
                 </div>

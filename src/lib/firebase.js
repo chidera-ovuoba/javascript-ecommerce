@@ -67,7 +67,8 @@ export const handleSubmitReview = async(e,id,rating,text,message,commentExists) 
     imgUrl: auth.currentUser.photoURL,
     rating:rating,
     text:text,
-    timestamp: serverTimestamp()
+    currentTimestamp:serverTimestamp(),
+    savedTimestamp: serverTimestamp(),
   }).then(() => { 
     message({error:false,message:`Successfully ${commentExists ? 'Edited':'Submitted'} Review`})
   })
