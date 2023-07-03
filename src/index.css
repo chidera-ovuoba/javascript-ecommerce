@@ -306,10 +306,10 @@ p.star {
 
 
 .slide_up_down{
-    animation: slideUp_Down ease 6s;
+    animation: slideUp_Down ease 6s forwards;
 }
 .slide_down_up{
-    animation: slideDown_Up ease 6s;
+    animation: slideDown_Up ease 6s forwards;
 }
 
 @keyframes rotate {
@@ -340,10 +340,10 @@ p.star {
     }
     
     25% {
-        top: 2rem;
+        top: 8rem;
     }
     50% {
-        top: 4rem;
+        top: 8rem;
     }
     75% {
         top: 8rem;

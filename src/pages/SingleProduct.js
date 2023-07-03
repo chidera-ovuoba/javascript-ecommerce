@@ -1,39 +1,40 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { BsStar } from 'react-icons/bs';
-import { AiOutlineShoppingCart, AiOutlineWarning } from 'react-icons/ai';
-import { AiOutlinePlus } from 'react-icons/ai';
+import {  AiOutlineWarning } from 'react-icons/ai';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
-// import { useGlobalContext } from '../lib/context';
 import Stripe from 'stripe';
 import { FaCartPlus, FaUserAlt } from 'react-icons/fa';
 import StarRating from '../components/StarRating';
 import { auth, db, handleSubmitReview } from '../lib/firebase';
-import { Timestamp, collectionGroup, doc, getDoc, getDocs, onSnapshot, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
+import { Timestamp, collectionGroup, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
 import Loader from '../components/Loader';
 import ErrorSnackbar from '../components/ErrorSnackbar';
 import SuccessSnackbar from '../components/SuccessSnackbar';
 const SingleProduct = () => {
     // const { ProductsData, addToCart, changeAmount } = useGlobalContext();
     const { id } = useParams();
-    const [productData, setProductData] = useState({});
-    const [rating, setRating] = useState(null);
-    const [comments, setComments] = useState(null);
+       const [rating, setRating] = useState(null);
     const [userCommentExists, setUserCommentExists] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState({error:false,message:""});
+    const [snackbarMessage, setSnackbarMessage] = useState({ error: false, message: "" });
+    const [productData, setProductData] = useState({});
+    const [comments, setComments] = useState(null);
 
-    console.log(Boolean(comments))
-
-
-    // const [reviewsData, setReviewsData] = useState([]);
     const reviewRef = useRef(null);
-    const { name, price_1, images, description, metadata } = productData;
-    console.log(metadata);
+    const { name, images, description,price_1  } = productData;
 
-    // const nameInitialsArr = localStorage.getItem('username')?.split(' ');
-    // const userImg = localStorage.getItem('userImg');
-    
-    const timeFormat = async(savedTimestamp,currentTimestamp) => {
+    useEffect(() => {
+        async function updateTime() {
+            const qSnap = query(collectionGroup(db, 'comments'), where('commentID', '==', id));
+            const querySnapshot = await getDocs(qSnap);
+            querySnapshot.forEach(async(doc) => {
+            await updateDoc(doc.ref, {
+                currentTimestamp: serverTimestamp()
+            })
+        });
+        }
+        updateTime()
+    }, [])
+    const timeFormat = (savedTimestamp,currentTimestamp) => {
         
         const secondsMilli = 1000
         const minuteMilli = secondsMilli * 60;
@@ -43,17 +44,9 @@ const SingleProduct = () => {
         const monthMilli = weekMilli * 4;
         const yearMilli = dayMilli * 365;
 
-        // Divide Time with a year
-        // const d = new Date();
-        const docRef = doc(db, `users/${auth.currentUser?.uid}/comments`,id);
-        await updateDoc(docRef, {
-            currentTimestamp:serverTimestamp() 
-        })
+
         let currentMilliTime = currentTimestamp * secondsMilli
         const savedMilliTime = savedTimestamp * secondsMilli
-        // console.log(ServerValue,new Date(reviewTimestamp * secondsMilli))
-        // const savedMilliTime = new Date(reviewTimestamp * secondsMilli).getTime();
-        // console.log(new Date(reviewTimestamp * secondsMilli),d)
         let seconds = Math.floor((currentMilliTime - savedMilliTime) / secondsMilli)
         let minute = Math.floor((currentMilliTime - savedMilliTime) / minuteMilli)
         let hour = Math.floor((currentMilliTime - savedMilliTime) / hourMilli)
@@ -61,46 +54,37 @@ const SingleProduct = () => {
         let week = Math.floor((currentMilliTime - savedMilliTime) / weekMilli)
         let month = Math.floor((currentMilliTime - savedMilliTime) / monthMilli)
         let years = Math.floor((currentMilliTime - savedMilliTime) / yearMilli)
-       console.log(seconds,minute,hour,day,week,month,years)
-
+        if (seconds == 0 ) {
+          return 'Just now' 
+       }
         if(seconds > 0 && seconds < 60){
-         return`${seconds} second${seconds === 1 ? '':'s'}`
+         return`${seconds} second${seconds === 1 ? '':'s'} ago`
         }
         if(minute > 0 && minute < 60){
-            return`${minute} minute${minute === 1 ? '':'s'}`
+            return`${minute} minute${minute === 1 ? '':'s'} ago`
         }
         if(hour > 0 && hour <  24){
-         return`${hour} hour${hour === 1 ? '':'s'}`
+         return`${hour} hour${hour === 1 ? '':'s'} ago`
         }
         if(day > 0 && day <  7){
-         return`${day} day${day === 1 ? '':'s'}`
+         return`${day} day${day === 1 ? '':'s'} ago`
         }
         if(week> 0 && week <  4){
-         return`${week} week${week === 1 ? '':'s'}`
+         return`${week} week${week === 1 ? '':'s'} ago`
         }
         if(month > 0 && month <  12){
-         return`${month} month${month === 1 ? '':'s'}`
+         return`${month} month${month === 1 ? '':'s'} ago`
         }
         if(years > 0 ){
-         return`${years} year${years === 1 ? '':'s'}`
+         return`${years} year${years === 1 ? '':'s'} ago`
         }
     }
         
 
-
-    
-    const retrieveProduct = useCallback(async () => {
-        const stripe = await Stripe(process.env.REACT_APP_STRIPE_SECRET_KEY)
-        const product = await stripe.products.retrieve(
-            id
-            );
-            console.log(product)
-        const price = await stripe.prices.retrieve(
-            product.default_price
-        );
-        setProductData({ ...product, price_1: price.unit_amount_decimal })
-
-    }, [id])
+    const deleteReview = async () => {
+    const docRef = doc(db, `users/${auth.currentUser?.uid}/comments`,id);
+    await deleteDoc(docRef);
+    }
 
     
     useEffect(() => {
@@ -116,21 +100,25 @@ const SingleProduct = () => {
         };
     }, [snackbarMessage])
     
+    const retrieveProduct = useCallback(async () => {
+        const stripe = await Stripe(process.env.REACT_APP_STRIPE_SECRET_KEY)
+        const product = await stripe.products.retrieve(
+            id
+            );
+            console.log(product)
+        const price = await stripe.prices.retrieve(
+            product.default_price
+        );
+        setProductData({ ...product, price_1: price.unit_amount_decimal })
+
+    }, [id])
     
     useEffect(() => {
         retrieveProduct()
-        const qSnap = query(collectionGroup(db, 'comments'), where('commentID', '==', id));
         async function fetchData() {
-            const querySnapshot = await getDocs(qSnap);
-            // console.log(qSnap);
-            // console.log(querySnapshot);
-            // const qSnap = query(collection(db, "cities"), where("state", "==", "CA"));
-            querySnapshot.forEach((doc) => {
-            console.log(doc.id, ' => ', doc.data());
-        });
     const docRef = doc(db, `users/${auth.currentUser?.uid}/comments`,id);
     const docSnap = await getDoc(docRef);
-    
+      const querySnapshot = await getDocs(qSnap);
         if (docSnap.exists()) {
             const { rating, text } = docSnap.data();
             reviewRef.current.value ??= text;
@@ -138,34 +126,38 @@ const SingleProduct = () => {
             setUserCommentExists(true);
         console.log("Document data:", docSnap.data());
         } else {
-          // docSnap.data() will be undefined in this case
             console.log("No such document! ");
             setUserCommentExists(false);
         }
-    }
-    
+        }
         
+    const qSnap = query(collectionGroup(db, 'comments'), where('commentID', '==', id));
     const unsubscribe = onSnapshot(qSnap, (querySnapshot) => {
         const commentsData = [];
         querySnapshot.forEach((doc) => {
         commentsData.push(doc.data());
         });
         setComments(commentsData)
-        
-   });
         fetchData();
+   });
         return () => {
-            unsubscribe()
+        unsubscribe()
         }
     }, [id, retrieveProduct])
+
+
+    
+  
     
     const averageReview = useMemo(() => Math.round(comments?.reduce((total,comment)=>{
         return total + comment.rating
     }, 0) / comments?.length), [comments])
 
-    console.log(averageReview)
     
-    const price = `${price_1?.slice(0, price_1?.length - 2)}.${price_1?.slice(price_1?.length - 2, price_1?.length)}`;
+    const price = price_1 && `${price_1?.slice(0, price_1?.length - 2)}.${price_1?.slice(price_1?.length - 2, price_1?.length)}`;
+    
+    
+    
     return (
         <div className='w-[90vw] mx-auto py-10 pt-[7rem]'>
             <Link className='p-3 mb-5 bg-white rounded-lg shadow-3xl' to='/'>Go Back</Link>
@@ -179,7 +171,7 @@ const SingleProduct = () => {
             <h2 className='p-5 border-b-2 border-yellow-800 border-solid'>{name}</h2>
             <div className='flex items-center justify-center gap-1 p-4 border-b-2 border-yellow-800 border-solid'><StarRating size={15} star_R={averageReview || 0} /> <span className='ml-4'>{comments?.length} reviews</span></div>
                     <div className='p-4 font-semibold border-b-2 border-yellow-800 border-solid'>
-                        <span className='mr-5'>Price:</span>{`$${price}`}
+                        <span className='mr-5'>Price:</span>$${price}
                     </div>
                     <p className="mt-4">Description: {description}</p>
                 </div>
@@ -212,14 +204,18 @@ const SingleProduct = () => {
                   const nameInitialsArr = name?.split(' ')
                    console.log(savedTimestamp,currentTimestamp)
                     
-                return(<div className='grid gap-2 pb-8'>
+                return(<div className='grid gap-2 pb-8' key={savedTimestamp?.seconds}>
                 <div className='flex flex-wrap items-center justify-between gap-2'>
                 <div className='w-[45px] h-[45px] bg-orange-500 grid place-items-center rounded-full mr-2'>
                 <div className={imgUrl != 'null' && imgUrl  ? 'hidden':'text-xl font-bold uppercase'} id='image_profileName'>{nameInitialsArr.length > 1 ? nameInitialsArr?.[0]?.charAt(0).concat(nameInitialsArr?.[1]?.charAt(0)) : nameInitialsArr?.[0]?.slice(0, 2)}{!nameInitialsArr?.[0] && <FaUserAlt />}
                     </div>
                 <img src={imgUrl} alt='userImg' className={imgUrl != 'null' && imgUrl  ? 'w-full h-full rounded-full img userImage': 'hidden'} />
                 </div>
-                
+                <div className='grid gap-1 mr-auto'>
+                <span className='bold'>{name}</span>
+                <span className='flex gap-1'><StarRating size={20} star_R={rating} /></span>
+                </div> 
+                 <span className='font-bold self-end min-w-[110px]'>{timeFormat(savedTimestamp?.seconds,currentTimestamp?.seconds)} </span>
                 </div>
                 <p>{text}</p>
                 </div>
@@ -228,15 +224,26 @@ const SingleProduct = () => {
             : <Loader h='h-[5rem] xs:h-[3.5rem]' w='w-[5rem] xs:w-[3.5rem] mx-auto' color='red' />
         }
             <h3 className='mb-6 text-2xl font-bold uppercase'>WRITE A CUSTOMER REVIEW</h3>
-            <div className='flex items-center gap-3 p-5 font-semibold text-white rounded-md bg-amber-400'><AiOutlineWarning size={23}/>Please sign in to write a review</div>
-            <form onSubmit={(e)=>handleSubmitReview(e,id,rating,reviewRef.current.value,setSnackbarMessage,userCommentExists)} className='flex  flex-col justify-center items-center gap-6 min-w-[500px] md:min-w-full text-md text-yellow-950 flex-wrap'>
+            {
+                auth?.currentUser ? 
+                <>
+                
+                <form onSubmit={(e)=>handleSubmitReview(e,id,rating,reviewRef.current.value,setSnackbarMessage,userCommentExists)} className='flex  flex-col justify-center items-center gap-6 min-w-[500px] md:min-w-full text-md text-yellow-950 flex-wrap'>
                 <textarea style={{ width: '90vw', height: '15rem' }} className='p-3 bg-yellow-200 resize-none' placeholder="what's your pick on the product?" ref={reviewRef} />
                 <div className="flex items-center justify-center gap-2">Rate :  <StarRating rating={rating} setRating={setRating} /></div>
+                <div className="flex items-center justify-center gap-2 flex-wrap">
                 <button type='submit' className='px-6 py-3 mx-auto font-semibold capitalize bg-orange-500 text-md'>{userCommentExists ? 'Edit':'submit'} review</button>
-            </form>
+                {userCommentExists && <button type='button' onClick={deleteReview} className='px-6 py-3 mx-auto font-semibold capitalize bg-red-500 text-md text-white'>Delete review</button>}
+                </div>
+                </form>
             {
-             snackbarMessage.error ? <ErrorSnackbar errorText={snackbarMessage.message}/>: <SuccessSnackbar successText={snackbarMessage.message}/>  
+             snackbarMessage.message && (snackbarMessage.error ? <ErrorSnackbar errorText={snackbarMessage.message}/>: <SuccessSnackbar successText={snackbarMessage.message}/>)
             }
+                </>
+                : <div className='flex items-center gap-3 p-5 font-semibold text-white rounded-md bg-amber-400'><AiOutlineWarning size={23} />Please <Link className='text-amber-800 cursor-pointer font-bold underline' to='/signin'>sign in</Link>
+                              or <Link className='text-amber-800 cursor-pointer font-bold underline' to='/signup'>sign up</Link> to write a review</div>
+            }
+            
         </div>
     )
 }

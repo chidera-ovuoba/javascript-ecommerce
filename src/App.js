@@ -91,7 +91,7 @@ const App = () => {
   
   
   const getProducts =useCallback( async () => {
-    console.log(Boolean(productsData) ,Boolean(productsPanelData),productsData == [],productsPanelData == [])
+    // console.log(Boolean(productsData) ,Boolean(productsPanelData),productsData == [],productsPanelData == [])
     // if (productsData === [] && productsPanelData == []) {
       console.log('getProducts')
       await Stripe(process.env.REACT_APP_STRIPE_SECRET_KEY).products.list({
@@ -121,7 +121,7 @@ const App = () => {
          const options = {
            clientSecret,
            appearance,
-         };
+  };
   
 
 
@@ -187,7 +187,7 @@ const App = () => {
       <div className='bg-yellow-300'>
       <Routes>
             <Route exact path='/' element={<Home productsPanelData={productsPanelData} products={productsData} />} />
-            <Route path='/products' element={<Products products={productsData} />}></Route>
+            <Route path='/products' element={<Products products={productsData}/>}></Route>
           <Route  path='/signin' element={<SignIn setNameInitialsArr={setNameInitialsArr}/>}></Route>
             <Route path='/signup' element={<SignUp  setNameInitialsArr={setNameInitialsArr} />}></Route>
           <Route  path='/singleproduct/:id' element={<SingleProduct />}></Route>

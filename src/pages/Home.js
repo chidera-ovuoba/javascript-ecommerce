@@ -7,7 +7,7 @@ import ProductsPanel from '../components/ProductsPanel';
 import ProductSection from '../components/ProductSection';
 import Testimonial from '../components/Testimonial';
 // import sliderData from '../assests/slider';
-const Home = ({productsPanelData,products}) => {
+const Home = ({ productsPanelData, products }) => {
   // const { loading, ProductsData, sliderIndex } = useGlobalContext();
   console.log('home')
 // if (loading) {
@@ -20,6 +20,9 @@ const Home = ({productsPanelData,products}) => {
 //         </div>
 //     </div>
 //   }
+
+  
+  
 return (
 <div> 
 <div className='grid place-items-center pt-32'>
