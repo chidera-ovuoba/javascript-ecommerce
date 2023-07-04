@@ -113,7 +113,9 @@ export const login = async (email, password,setLoading,setError,setNameInitialsA
          localStorage.setItem('username', [user.user.displayName])
          setNameInitialsArr(user.user.displayName.split(' '))
          setLoading(false)
-          window.location.replace(window.location.origin); 
+          // window.history.back(); 
+         console.log(window.history.length)
+         console.log(window.history.state)
       })
     } catch (error) {
       setLoading(false)

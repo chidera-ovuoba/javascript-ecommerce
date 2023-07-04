@@ -137,6 +137,7 @@ const SingleProduct = () => {
         querySnapshot.forEach((doc) => {
         commentsData.push(doc.data());
         });
+        console.log(commentsData);
         setComments(commentsData)
         fetchData();
    });
@@ -171,7 +172,7 @@ const SingleProduct = () => {
             <h2 className='p-5 border-b-2 border-yellow-800 border-solid'>{name}</h2>
             <div className='flex items-center justify-center gap-1 p-4 border-b-2 border-yellow-800 border-solid'><StarRating size={15} star_R={averageReview || 0} /> <span className='ml-4'>{comments?.length} reviews</span></div>
                     <div className='p-4 font-semibold border-b-2 border-yellow-800 border-solid'>
-                        <span className='mr-5'>Price:</span>$${price}
+                        <span className='mr-5'>Price:</span>${price}
                     </div>
                     <p className="mt-4">Description: {description}</p>
                 </div>
@@ -199,6 +200,11 @@ const SingleProduct = () => {
             <h3 className='mb-6 text-2xl font-bold uppercase'>Reviews</h3>
             
             {
+                !comments?.length ? 
+                <div className='py-20 text-center'>
+                <p className=" text-3xl font-bold capitalize text-yellow-800 text-opacity-70 tracking-wider">no reviews yet</p>
+                </div>
+                :
                 comments ? 
                 comments.map(({imgUrl,savedTimestamp, currentTimestamp,text,name,rating},i) => {
                   const nameInitialsArr = name?.split(' ')

@@ -93,18 +93,25 @@ const App = () => {
   const getProducts =useCallback( async () => {
     // console.log(Boolean(productsData) ,Boolean(productsPanelData),productsData == [],productsPanelData == [])
     // if (productsData === [] && productsPanelData == []) {
-      console.log('getProducts')
-      await Stripe(process.env.REACT_APP_STRIPE_SECRET_KEY).products.list({
+    const stripe = await Stripe(process.env.REACT_APP_STRIPE_SECRET_KEY)
+    console.log('getProducts')
+    
+      stripe.prices.list({
         limit: 20,
-      }).then((products) => {
-          const productsData = products.data.reduce((total, item) => {
-            return [...total, { image: item.images[0], text: Object.keys(item.metadata).find((item) => item !== 'front'), name: item.name, price_id: item.default_price, desc: item.description, metadata: item.metadata, id: item.id }]
-          }, [])
-          setProductsPanelData(productsData.filter((item) => item.metadata.front === 'yes'))
-          setProductsData(productsData)
-      }).catch((err) => {
-        console.log(err)
-      });;
+        }).then((prices) => {
+          stripe.products.list({
+            limit: 20,
+          }).then((products) => {
+              const productsData = products.data.reduce((total, item) => {
+                return [...total, { image: item.images[0], text: Object.keys(item.metadata).find((item) => item !== 'front'), name: item.name, price: prices.data?.filter((price)=>price.product === item.id)[0]?.unit_amount_decimal, desc: item.description, metadata: item.metadata, id: item.id }]
+              }, [])
+              setProductsPanelData(productsData.filter((item) => item.metadata.front === 'yes'))
+            setProductsData(productsData)
+    
+          }).catch((err) => {
+            console.log(err)
+          });;
+        })
     // }
   },
   []
