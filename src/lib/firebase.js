@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, connectAuthEmulator, signInWithEmailAndPassword, AuthErrorCodes, createUserWithEmailAndPassword, onAuthStateChanged, updateProfile, signOut, signInWithRedirect, GoogleAuthProvider } from "firebase/auth";
 import {getDownloadURL, getStorage, listAll, ref, uploadBytes } from 'firebase/storage'
 import { getFirestore, collection, getDocs, addDoc, setDoc, doc, serverTimestamp, query, where, collectionGroup, Timestamp, } from "firebase/firestore"
-
+ 
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -50,7 +50,7 @@ export const handleSubmitReview = async(e,id,rating,text,message,commentExists) 
   // // Stop listening to changes
   // unsubscribe();
   if (!rating || !text) {
-    message({ error: true, message: `${!rating && !text ? 'rating and review comment have' : !rating && 'rating has' || !text && 'review comment has '} not been filled` })
+    message({ error: true, message: `${(!rating && !text) ? 'rating and review comment have' : (!rating && 'rating has') || (!text && 'review comment has ')} not been filled` })
     return
   }
   
@@ -84,8 +84,8 @@ export const handleSubmitReview = async(e,id,rating,text,message,commentExists) 
 export const logOut = async (setLoading) => {
   setLoading(true)
   await signOut(auth).then(() => {
-    localStorage.setItem('username','')
-    localStorage.setItem('userImg', '')
+    localStorage.setItem('username_freedomMR','')
+    localStorage.setItem('userImg_freedomMR', '')
     document.querySelector('.userImage').classList.add('hidden')
     setLoading(false)
    })
@@ -110,10 +110,11 @@ export const login = async (email, password,setLoading,setError,setNameInitialsA
     try{
   
        await signInWithEmailAndPassword(auth, email, password).then((user) => {
-         localStorage.setItem('username', [user.user.displayName])
+         localStorage.setItem('username_freedomMR', [user.user.displayName])
          setNameInitialsArr(user.user.displayName.split(' '))
          setLoading(false)
           // window.history.back(); 
+          window.location.replace(localStorage.getItem('prev-url_freedomMR'))
          console.log(window.history.length)
          console.log(window.history.state)
       })
@@ -124,18 +125,19 @@ export const login = async (email, password,setLoading,setError,setNameInitialsA
   }
  export const signup = async (name,email,password,confirm,setLoading,setError,setNameInitialsArr) => {
     if (name && email && password && confirm) {
-      if (password == confirm) {
+      if (password === confirm) {
         setLoading(true)
     try{
           await createUserWithEmailAndPassword(auth, email, password).then(() => {
             updateProfile(auth.currentUser, {
             displayName:name ,
             }).then(() => {
-              localStorage.setItem('username', [auth.currentUser?.displayName])
+              localStorage.setItem('username_freedomMR', [auth.currentUser?.displayName])
               setNameInitialsArr(auth.currentUser?.displayName?.split(' '))
                 // console.log(user)
               setLoading(false)
-                window.location.replace(window.location.origin); 
+                // window.location.replace(window.location.origin); 
+              window.location.replace(localStorage.getItem('prev-url_freedomMR'))
             })
             
           });
@@ -148,8 +150,11 @@ export const login = async (email, password,setLoading,setError,setNameInitialsA
 }
 export const handleGoogleAuth = (navigate) => {
   console.log('go')
-  navigate('/');
-  signInWithRedirect(auth, new GoogleAuthProvider());
+  signInWithRedirect(auth, new GoogleAuthProvider()).then(() => {
+    
+  });
+  window.location.assign(localStorage.getItem('prev-url_freedomMR'));
+  // navigate('/');
   }
    
     
@@ -170,6 +175,7 @@ export const handleGoogleAuth = (navigate) => {
                     imgContainer.removeChild(item)
                 }
                 setOpenLogout(false);
+                return
                 })
                 profileName.classList.add('hidden')
                 imgContainer.appendChild(
@@ -182,7 +188,7 @@ export const handleGoogleAuth = (navigate) => {
                         }
                      )
                  )
-                  localStorage.setItem('userImg', url);
+                  localStorage.setItem('userImg_freedomMR', url);
                   updateProfile(auth.currentUser, {
                   photoURL:url ,
                   })

@@ -121,7 +121,7 @@ const SingleProduct = () => {
       const querySnapshot = await getDocs(qSnap);
         if (docSnap.exists()) {
             const { rating, text } = docSnap.data();
-            reviewRef.current.value ??= text;
+            reviewRef.current.value = text;
             setRating(rating);
             setUserCommentExists(true);
         console.log("Document data:", docSnap.data());
@@ -215,7 +215,7 @@ const SingleProduct = () => {
                 <div className='w-[45px] h-[45px] bg-orange-500 grid place-items-center rounded-full mr-2'>
                 <div className={imgUrl != 'null' && imgUrl  ? 'hidden':'text-xl font-bold uppercase'} id='image_profileName'>{nameInitialsArr.length > 1 ? nameInitialsArr?.[0]?.charAt(0).concat(nameInitialsArr?.[1]?.charAt(0)) : nameInitialsArr?.[0]?.slice(0, 2)}{!nameInitialsArr?.[0] && <FaUserAlt />}
                     </div>
-                <img src={imgUrl} alt='userImg' className={imgUrl != 'null' && imgUrl  ? 'w-full h-full rounded-full img userImage': 'hidden'} />
+                <img src={imgUrl} alt='userImg_freedomMR' className={imgUrl != 'null' && imgUrl  ? 'w-full h-full rounded-full img userImage': 'hidden'} />
                 </div>
                 <div className='grid gap-1 mr-auto'>
                 <span className='bold'>{name}</span>
@@ -246,8 +246,10 @@ const SingleProduct = () => {
              snackbarMessage.message && (snackbarMessage.error ? <ErrorSnackbar errorText={snackbarMessage.message}/>: <SuccessSnackbar successText={snackbarMessage.message}/>)
             }
                 </>
-                : <div className='flex items-center gap-3 p-5 font-semibold text-white rounded-md bg-amber-400'><AiOutlineWarning size={23} />Please <Link className='text-amber-800 cursor-pointer font-bold underline' to='/signin'>sign in</Link>
-                              or <Link className='text-amber-800 cursor-pointer font-bold underline' to='/signup'>sign up</Link> to write a review</div>
+                : <div className='flex items-center gap-3 p-5 font-semibold text-white rounded-md bg-amber-400'><AiOutlineWarning size={23} />Please <Link className='text-amber-800 cursor-pointer font-bold underline' to='/signin' onClick={()=>{localStorage.setItem('prev-url_freedomMR',window.location.href)}}>sign in</Link>
+                        or <Link className='text-amber-800 cursor-pointer font-bold underline' to='/signup' onClick={()=>{localStorage.setItem('prev-url_freedomMR',window.location.href)}}>sign up</Link> to write a review
+                    </div>
+                
             }
             
         </div>

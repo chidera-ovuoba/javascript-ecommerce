@@ -22,11 +22,11 @@ const Navbar = ({nameInitialsArr,setNameInitialsArr}) => {
     const [profileImgLoading, setProfileImgLoading] = useState(false);
     const [LogoutLoading, setLogoutLoading] = useState(false);
     // const  = 2
-    const userImage = localStorage.getItem('userImg')
+    const userImage = localStorage.getItem('userImg_freedomMR')
     // console.log(,'hj');
 
         // setNameInitialsArr(user)
-    // const userImage = auth.currentUser?.photoURL || localStorage.getItem('userImg') ;
+    // const userImage = auth.currentUser?.photoURL || localStorage.getItem('userImg_freedomMR') ;
     // if (nameInitialsArr?.length > 1 ) {
 //         onAuthStateChanged(auth, user=> {
 //                 if (user) {
@@ -72,8 +72,8 @@ const Navbar = ({nameInitialsArr,setNameInitialsArr}) => {
                                 setOpenLogout((prev) => !prev)
                                openNavMenu && setOpenNavMenu(false);
                             }}>
-                                <div className={userImage != 'null' && userImage  ? 'hidden':'text-xl font-bold uppercase'} id='image_profileName'>{nameInitialsArr.length > 1 ? nameInitialsArr?.[0]?.charAt(0).concat(nameInitialsArr?.[1]?.charAt(0)) : nameInitialsArr?.[0]?.slice(0, 2)}{!nameInitialsArr?.[0] && <FaUserAlt />}</div>
-                                <img src={userImage} alt='userImg' className={userImage != 'null' && userImage  ? 'w-full h-full rounded-full img userImage': 'hidden'} />
+                                <div className={userImage != 'null' && userImage  ? 'hidden':'text-xl font-bold uppercase'} id='image_profileName'>{nameInitialsArr?.length > 1 ? nameInitialsArr?.[0]?.charAt(0).concat(nameInitialsArr?.[1]?.charAt(0)) : nameInitialsArr?.[0]?.slice(0, 2)}{!nameInitialsArr?.[0] && <FaUserAlt />}</div>
+                                <img src={userImage} alt='userImg_freedomMR' className={userImage != 'null' && userImage  ? 'w-full h-full rounded-full img userImage': 'hidden'} />
                             </div>
                             {profileImgLoading && <Loader h='h-[2rem] xs:h-[1rem]' w='w-[2rem] xs:w-[1rem]' color='red' />}
                         {openLogout && <div className='fixed top-[5rem] w-[8rem] bg-white -right-[2rem] -translate-x-1/2 grid place-items-center gap-4 py-4 shadow-md text-white text-sm  rounded-sm'>
@@ -84,16 +84,22 @@ const Navbar = ({nameInitialsArr,setNameInitialsArr}) => {
                             <label htmlFor="input-img-file" className='text-yellow-700 cursor-pointer' onClick={() => {
                                 uploadImage(setOpenLogout,setProfileImgLoading)
                             }}>Upload Image</label>
-                            <button className='bg-[#f57c0a] rounded-sm px-2 py-1 flex items-center justify-center gap-2' onClick={signOut}>LOG OUT { LogoutLoading && <Loader color={'green'}  />}</button>
-                            </>
-                                        :
-                                    <>
-                                    <Link className='text-yellow-700 cursor-pointer' to='/signin' onClick={()=>setOpenLogout(false)}>Sign In</Link>
-                                    <Link className='text-yellow-700 cursor-pointer' to='/signup' onClick={()=>setOpenLogout(false)}>Sign Up</Link>
-                                    </>
-                                    
-                                }
-                        </div>}
+                <button className='bg-[#f57c0a] rounded-sm px-2 py-1 flex items-center justify-center gap-2' onClick={signOut}>LOG OUT { LogoutLoading && <Loader color={'green'}  />}</button>
+                </>
+                            :
+                        <>
+                        <Link className='text-yellow-700 cursor-pointer' to='/signin' onClick={()=>{
+                           localStorage.setItem('prev-url_freedomMR',window.location.href)      
+                            setOpenLogout(false)
+                        }}>Sign In</Link>
+                        <Link className='text-yellow-700 cursor-pointer' to='/signup' onClick={()=>{
+                            localStorage.setItem('prev-url_freedomMR',window.location.href)      
+                            setOpenLogout(false)
+                        }}>Sign Up</Link>
+                        </>
+                        
+                    }
+            </div>}
                         {
                             openNavMenu && <div className = 'absolute -bottom-[7rem] w-[8rem] bg-white -right-10 text-lg place-items-center py-5 shadow-md md:grid hidden' >
                             <p className='hover:text-yellow-400' onClick={()=>setOpenNavMenu(false)}><Link to="/">Home</Link></p>

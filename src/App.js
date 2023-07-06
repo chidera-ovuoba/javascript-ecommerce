@@ -1,7 +1,7 @@
-import React, { useState,useEffect, useCallback } from 'react'
+import React, { useState,useEffect, useCallback, useLayoutEffect } from 'react'
 import { Navbar } from './components';
 import Home from './pages/Home';
-import { Routes,Route} from 'react-router-dom';
+import { Routes,Route, useLocation} from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import Stripe from 'stripe';
 import Footer from './components/Footer';
@@ -16,6 +16,8 @@ import { auth } from './lib/firebase';
 
 
 
+
+
 const App = () => {
   const [products, setProducts] = useState();
   const [productsPanelData, setProductsPanelData] = useState([]);
@@ -26,7 +28,15 @@ const App = () => {
   // const [userImg, setUserImg] = useState(null);
   const [clientSecret, setClientSecret] = useState("");
   const [paymentIntentId, setPaymentIntentId] = useState("");
-  const [nameInitialsArr, setNameInitialsArr] = useState(localStorage.getItem('username')?.split(' '));
+  const [nameInitialsArr, setNameInitialsArr] = useState(localStorage.getItem('username_freedomMR')?.split(' '));
+  let location = useLocation();
+    
+  
+   useEffect(() => {
+    //  ga('send', 'pageview');
+    //  window.history.replaceState({ prevUrl: window.location.href }, null)
+     console.log(location.state,location.pathname,window.location.href);
+  }, [location]);
 
 
    const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
@@ -78,12 +88,12 @@ const App = () => {
       if (user) {
         console.log(user)
         setNameInitialsArr(user?.displayName?.split(' '))
-        localStorage.setItem('username',user.displayName)
-        localStorage.setItem('userImg',user.photoURL)
+        localStorage.setItem('username_freedomMR',user.displayName)
+        localStorage.setItem('userImg_freedomMR',user.photoURL)
       } else {
         setNameInitialsArr([]);
-         localStorage.setItem('username','')
-        localStorage.setItem('userImg','')
+         localStorage.setItem('username_freedomMR','')
+        localStorage.setItem('userImg_freedomMR','')
       }
      })
   }, [])
@@ -116,7 +126,7 @@ const App = () => {
   },
   []
   )
-  useEffect(() => {
+  useLayoutEffect(() => {
     getProducts()
     return () => {
     };
