@@ -11,7 +11,8 @@ const firebaseConfig = {
     storageBucket: "ecommerce-f6c82.appspot.com",
     messagingSenderId: "637659560469",
     appId: process.env.REACT_APP_FIREBASE_APP_ID,
-    measurementId: "G-53T1WFVFNN"
+  measurementId: "G-53T1WFVFNN",
+    
   };
   
   const app = initializeApp(firebaseConfig);
@@ -148,12 +149,10 @@ export const login = async (email, password,setLoading,setError,setNameInitialsA
   }
   }
 }
-export const handleGoogleAuth = (navigate) => {
+export const handleGoogleAuth = () => {
   console.log('go')
-  signInWithRedirect(auth, new GoogleAuthProvider()).then(() => {
-    
-  });
   window.location.assign(localStorage.getItem('prev-url_freedomMR'));
+  signInWithRedirect(auth, new GoogleAuthProvider())
   // navigate('/');
   }
    

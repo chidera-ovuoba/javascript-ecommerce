@@ -58,7 +58,7 @@ const SignIn = ({setNameInitialsArr}) => {
       <input type="password" className='outline-none border-yellow-800 border-b-2 focus:border-yellow-500 border-solid pb-3 max-w-[26rem] bg-transparent w-[90vw]' placeholder='enter password' id='passwordID' value={password} onChange={(e) => setPassword(e.target.value)}  />
       </div>
       
-      <button type='submit' className='bg-orange-500 mt-4 text-orange-800 font-medium  text-center text-md text-white p-3 rounded-lg place-self-start mb-5 flex justify-center items-center gap-2'>LOGIN {loading && <Loader color='green' w='w-[2rem] xs:w-[1rem]' h='h-[2rem] xs:h-[1rem]'/>}</button>
+      <button type='submit' className='bg-orange-500 mt-4  font-medium  text-center text-md text-white p-3 rounded-lg place-self-start mb-5 flex justify-center items-center gap-2'>LOGIN {loading && <Loader color='green' w='w-[2rem] xs:w-[1rem]' h='h-[2rem] xs:h-[1rem]'/>}</button>
       </form>
       <SignWIthGoogle/>
       <span className='place-start text-lg  text-yellow-800'> New Customer ?<Link to="/signup" className='cursor-pointer focus:text-yellow-500 hover:text-yellow-500 font-bold'>Register</Link></span>

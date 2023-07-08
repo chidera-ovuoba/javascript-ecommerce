@@ -21,6 +21,7 @@ const Navbar = ({nameInitialsArr,setNameInitialsArr}) => {
     const [openNavMenu, setOpenNavMenu] = useState(false)
     const [profileImgLoading, setProfileImgLoading] = useState(false);
     const [LogoutLoading, setLogoutLoading] = useState(false);
+    let location = useLocation();
     // const  = 2
     const userImage = localStorage.getItem('userImg_freedomMR')
     // console.log(,'hj');
@@ -89,11 +90,15 @@ const Navbar = ({nameInitialsArr,setNameInitialsArr}) => {
                             :
                         <>
                         <Link className='text-yellow-700 cursor-pointer' to='/signin' onClick={()=>{
-                           localStorage.setItem('prev-url_freedomMR',window.location.href)      
+                            if(location.pathname !== '/signin'){
+                                localStorage.setItem('prev-url_freedomMR',window.location.href)      
+                            }
                             setOpenLogout(false)
                         }}>Sign In</Link>
                         <Link className='text-yellow-700 cursor-pointer' to='/signup' onClick={()=>{
-                            localStorage.setItem('prev-url_freedomMR',window.location.href)      
+                            if(location.pathname !== '/signup'){
+                                localStorage.setItem('prev-url_freedomMR',window.location.href)  
+                            }                    
                             setOpenLogout(false)
                         }}>Sign Up</Link>
                         </>

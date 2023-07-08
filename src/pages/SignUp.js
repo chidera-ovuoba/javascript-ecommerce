@@ -53,7 +53,7 @@ const SignUp = ({setNameInitialsArr}) => {
                <input type="password" className='outline-none border-yellow-800 border-b-2 focus:border-yellow-500 border-solid pb-3 max-w-[26rem] bg-transparent w-[90vw]' placeholder='enter password' id='confirmID' value={confirm} onChange={(e) => setConfirm(e.target.value)}  />
                </div>         
                
-           <button type='submit' className='bg-orange-500 mt-4 text-orange-800 font-medium  text-center text-md text-white p-3 rounded-lg place-self-start mb-5 flex justify-center items-center gap-2'>REGISTER {loading && <Loader color={'green'}/>}</button>
+           <button type='submit' className='bg-orange-500 mt-4  font-medium  text-center text-md text-white p-3 rounded-lg place-self-start mb-5 flex justify-center items-center gap-2'>REGISTER {loading && <Loader color='green' w='w-[2rem] xs:w-[1rem]' h='h-[2rem] xs:h-[1rem]'/>}</button>
           {
             errorText && <ErrorSnackbar errorText={errorText}  />
           }

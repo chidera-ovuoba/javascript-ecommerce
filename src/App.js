@@ -29,14 +29,6 @@ const App = () => {
   const [clientSecret, setClientSecret] = useState("");
   const [paymentIntentId, setPaymentIntentId] = useState("");
   const [nameInitialsArr, setNameInitialsArr] = useState(localStorage.getItem('username_freedomMR')?.split(' '));
-  let location = useLocation();
-    
-  
-   useEffect(() => {
-    //  ga('send', 'pageview');
-    //  window.history.replaceState({ prevUrl: window.location.href }, null)
-     console.log(location.state,location.pathname,window.location.href);
-  }, [location]);
 
 
    const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
