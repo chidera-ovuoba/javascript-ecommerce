@@ -151,7 +151,6 @@ export const login = async (email, password,setLoading,setError,setNameInitialsA
 }
 export const handleGoogleAuth = () => {
   console.log('go')
-  window.location.assign(localStorage.getItem('prev-url_freedomMR'));
   signInWithRedirect(auth, new GoogleAuthProvider())
   // navigate('/');
   }

@@ -42,7 +42,7 @@ const SignIn = ({setNameInitialsArr}) => {
 
   return (
     <>
-      <div className='grid place-items-center pt-32 px-4'>
+      <div className='grid place-items-center pt-32 px-4 user_auth_bg'>
      <div className="grid gap-5">
       <h1 className='text-2xl font-bold mb-6 text-yellow-800'>SIGN-IN</h1>
       <form className='flex flex-col gap-6 text-lg font-medium text-yellow-800' onSubmit={(e) => {
