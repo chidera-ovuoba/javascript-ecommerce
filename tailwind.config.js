@@ -26,7 +26,16 @@ module.exports = {
 
           // Complex site-specific column configuration
          'footer2': 'calc(50%) calc(50% - 2rem)',
+        },
+        keyframes: {
+        stretch: {
+          '100%': { width: '3rem' }
+        },
+        },
+        animation: {
+        'stretch': 'stretch 1s ease infinite alternate both',
         }
+        
       }
   },
   variants: {
