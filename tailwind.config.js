@@ -31,9 +31,15 @@ module.exports = {
         stretch: {
           '100%': { width: '3rem' }
         },
+        fadeIn: {
+          '0%': { opacity: '0',transform:'translateX(-100%)' },
+          '25%,75%': { transform: 'translateX(0%)',opacity:'1' },
+          '100%': { transform: 'translateX(100%)',opacity:'0' },
+        },
         },
         animation: {
         'stretch': 'stretch 1s ease infinite alternate both',
+        'fadeIn': 'fadeIn 5s ease infinite',
         }
         
       }
