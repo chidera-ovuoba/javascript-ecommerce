@@ -35,11 +35,16 @@ module.exports = {
           '0%': { opacity: '0',transform:'translateX(-100%)' },
           '25%,75%': { transform: 'translateX(0%)',opacity:'1' },
           '100%': { transform: 'translateX(100%)',opacity:'0' },
-        },
+          },
+          bounce_light: {
+            '0%': {transform:'translateY(0)'},
+            '100%': {transform:'translateY(-1px)'},
+        }
         },
         animation: {
         'stretch': 'stretch 1s ease infinite alternate both',
-        'fadeIn': 'fadeIn 5s ease infinite',
+        'fadeIn': 'fadeIn 8s ease infinite',
+        'fadeIn_bounce':'fadeIn 8s ease infinite,bounce_light 1.5s infinite cubic-bezier(.5,20,.5,-20) '
         }
         
       }
