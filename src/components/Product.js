@@ -30,7 +30,6 @@ const Product = ({ image, name, id ,price}) => {
     }, 0) / comments?.length), [comments])
    
     const price_1 = `${price?.slice(0, price?.length - 2)}.${price?.slice(price?.length - 2, price?.length)}`;
-    console.log(Number(price_1))
     function percentagePrice() {
       return Math.floor((Number(price_1) - 50)*100/50)
     }
