@@ -34,6 +34,7 @@ module.exports = {
         fadeIn: {
           '0%': { opacity: '0',transform:'translateX(-100%)' },
           '25%,75%': { transform: 'translateX(0%)',opacity:'1' },
+          '85%': { transform: 'translateX(100%)',opacity:'0' },
           '100%': { transform: 'translateX(100%)',opacity:'0' },
           },
           bounce_light: {
@@ -43,8 +44,8 @@ module.exports = {
         },
         animation: {
         'stretch': 'stretch 1s ease infinite alternate both',
-        'fadeIn': 'fadeIn 8s ease infinite',
-        'fadeIn_bounce':'fadeIn 8s ease infinite,bounce_light 1.5s infinite cubic-bezier(.5,20,.5,-20) '
+        'fadeIn': 'fadeIn 8s ease forwards',
+        'fadeIn_bounce':'fadeIn 8s ease ,bounce_light 1.5s infinite cubic-bezier(.5,20,.5,-20) '
         }
         
       }

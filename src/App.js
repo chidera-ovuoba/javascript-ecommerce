@@ -196,7 +196,7 @@ const App = () => {
       <div className='bg-yellow-300'>
       <Routes>
             <Route exact path='/' element={<Home productsPanelData={productsPanelData} products={productsData} />} />
-            <Route path='/products' element={<Products products={productsData}/>}></Route>
+          <Route path='/products' element={<Products products={productsData} productsPanelData={productsPanelData} />}></Route>
           <Route  path='/signin' element={<SignIn setNameInitialsArr={setNameInitialsArr}/>}></Route>
             <Route path='/signup' element={<SignUp  setNameInitialsArr={setNameInitialsArr} />}></Route>
           <Route  path='/singleproduct/:id' element={<SingleProduct />}></Route>

@@ -1,17 +1,57 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Product from '../components/Product';
 import { useGlobalContext } from '../lib/context';
 import logo from '../assests/logo (1).png';
 import { FaSearch } from 'react-icons/fa';
 import Pagination from '../components/Pagination';
-const Products = ({products}) => {
+const Products = ({products,productsPanelData}) => {
   // const {searchTerm } nb= useGlobalContext();
     const [currentPage, setCurrentPage] = useState(1); 
+    const [isLoading, setIsLoading] = useState(false); 
     const postsPerPage = 10;
     const indexofLastPage = currentPage * postsPerPage;
     const indexofFirstPage = indexofLastPage - postsPerPage;
     const currentPosts = products?.slice(indexofFirstPage, indexofLastPage);
     const totalPages = products?.length;
+  const imageRef = useRef(null);
+  let index = 0;
+  const [currentProductDisplay, setCurrentProductDisplay] = useState(productsPanelData?.[index])
+  console.log(currentProductDisplay);
+  useEffect(() => {
+    console.log('effect run');
+    
+    let interval;
+    // imageRef.current?.addEventListener('load',() => {
+    //   console.log(imageRef.current?.complete);
+    //   setIsLoading(imageRef.current?.complete)
+    // });
+    // if (isLoading) {
+      interval = setInterval(() => {
+        if (index >= productsPanelData?.length) {
+          index = 0;
+        }
+    setCurrentProductDisplay(productsPanelData?.[index])
+    index++;
+    setTimeout(() => {
+      setCurrentProductDisplay(null)
+      console.log('tu')
+    },8000)
+    console.log(currentProductDisplay)
+  },9000)
+//     } else {
+//       clearInterval(interval);
+// }
+   
+  return () => {
+    clearInterval(interval)
+    // imageRef.current?.removeEventListener('load', () => {
+    //   console.log(imageRef.current?.complete);
+    //   setIsLoading(imageRef.current?.complete && imageRef.current?.naturalHeight)
+    // });
+  };
+ }, [])
+  
+  
   return (
     <div className='w-[95vw] mx-auto pt-[8rem]'>
       <div className="flex items-center justify-center w-full mb-8">
@@ -25,11 +65,13 @@ const Products = ({products}) => {
     <div className="w-full px-10 pb-8 bg-yellow-400 pt-14">
     <div className="flex justify-center gap-[3rem] flex-wrap">
     <div className="flex flex-col gap-8 justify-center md:items-center flex-[1.5] min-w-[15rem] overflow-hidden">
-    <h2 className="text-2xl font-extrabold tracking-wide text-yellow-800 capitalize align-top animate-fadeIn md:text-center">get up to 50% off on kia headphones</h2>
+    <h2 className={`text-2xl font-extrabold tracking-wide text-yellow-800 capitalize align-top ${currentProductDisplay ?'animate-fadeIn':'transform translate-x-[-100%]'} md:text-center`}>get up to 50% off on {currentProductDisplay?.name}</h2>
     <button className="bg-yellow-200 cursor-pointer hover:text-white hover:bg-yellow-500 rounded-lg py-2 px-10 w-[max-content] text-yellow-700 text-md font-bold capitalize">buy now</button>
     </div>
     <div className="w-[10rem] h-[11rem] min-w-[11rem] rounded-full bg-gradient-to-r from-orange-500 to-amber-500 flex justify-start overflow-hidden p-5">
-    <img src={logo} alt="headphone" className="w-full h-full img animate-fadeIn_bounce" />
+            {currentProductDisplay && <img src={currentProductDisplay?.image} ref={imageRef} onLoad={() => {
+              setIsLoading(imageRef.current?.complete)
+            }} alt="headphone" className={`w-full h-full img animate-fadeIn_bounce ${isLoading ? 'opacity-100':'opacity-0'}`} />}
     </div>
     </div>
     <div className="flex items-center justify-center gap-2 mt-8">
