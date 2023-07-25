@@ -107,7 +107,8 @@ const App = () => {
               const productsData = products.data.reduce((total, item) => {
                 return [...total, { image: item.images[0], text: Object.keys(item.metadata).find((item) => item !== 'front'), name: item.name, price: prices.data?.filter((price)=>price.product === item.id)[0]?.unit_amount_decimal, desc: item.description, metadata: item.metadata, id: item.id }]
               }, [])
-              setProductsPanelData(productsData.filter((item) => item.metadata.front === 'yes'))
+            const filteredProductsData = productsData.filter((item) => item.metadata.front === 'yes')
+              setProductsPanelData(filteredProductsData)
             setProductsData(productsData)
     
           }).catch((err) => {

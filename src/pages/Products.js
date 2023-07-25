@@ -13,45 +13,53 @@ const Products = ({products,productsPanelData}) => {
     const indexofFirstPage = indexofLastPage - postsPerPage;
     const currentPosts = products?.slice(indexofFirstPage, indexofLastPage);
     const totalPages = products?.length;
-  const imageRef = useRef(null);
   let index = 0;
-  const [currentProductDisplay, setCurrentProductDisplay] = useState(productsPanelData?.[index])
-  console.log(currentProductDisplay);
+  const [currentProductDisplay, setCurrentProductDisplay] = useState({});
+  
+  // console.log(currentProductDisplay,productsPanelData);
   useEffect(() => {
-    console.log('effect run');
+    // setCurrentProductDisplay(productsPanelData?.[index]);
+    // console.log(currentProductDisplay,productsPanelData);
+    // console.log(isLoading);
+    // console.log('effect run');
     
     let interval;
-    // imageRef.current?.addEventListener('load',() => {
-    //   console.log(imageRef.current?.complete);
-    //   setIsLoading(imageRef.current?.complete)
-    // });
-    // if (isLoading) {
-      interval = setInterval(() => {
-        if (index >= productsPanelData?.length) {
-          index = 0;
-        }
+    if (!isLoading) {
+      window.addEventListener('load', () => {
+        let img = [...document.querySelectorAll('.images_banner')];
+      // console.log(img);
+      if (img.every((item) => item.complete)) {
+        setIsLoading(true);
+          // img.map((item)=>item.classList.add(``))
+      }
+    });
+  }
+  if (isLoading) {
+    interval = setInterval(() => {
+      if (index >= productsPanelData?.length) {
+      index = 0;
+    }
     setCurrentProductDisplay(productsPanelData?.[index])
     index++;
     setTimeout(() => {
       setCurrentProductDisplay(null)
-      console.log('tu')
-    },8000)
-    console.log(currentProductDisplay)
+      // console.log('tu')
+    },8000)    
   },9000)
-//     } else {
-//       clearInterval(interval);
-// }
-   
-  return () => {
+    }
+    
+    return () => {
     clearInterval(interval)
     // imageRef.current?.removeEventListener('load', () => {
-    //   console.log(imageRef.current?.complete);
-    //   setIsLoading(imageRef.current?.complete && imageRef.current?.naturalHeight)
-    // });
-  };
- }, [])
+      //   console.log(imageRef.current?.complete);
+      //   setIsLoading(imageRef.current?.complete && imageRef.current?.naturalHeight)
+      // });
+    };
+  }, [isLoading])
   
-  
+ const sliderClick = () => {
+   console.log('clik');
+  }
   return (
     <div className='w-[95vw] mx-auto pt-[8rem]'>
       <div className="flex items-center justify-center w-full mb-8">
@@ -62,23 +70,26 @@ const Products = ({products,productsPanelData}) => {
       <FaSearch/>
       </span>
       </div>
-    <div className="w-full px-10 pb-8 bg-yellow-400 pt-14">
+    <div className="w-full px-10 xs:px-4 pb-8 bg-yellow-400 pt-14">
     <div className="flex justify-center gap-[3rem] flex-wrap">
-    <div className="flex flex-col gap-8 justify-center md:items-center flex-[1.5] min-w-[15rem] overflow-hidden">
-    <h2 className={`text-2xl font-extrabold tracking-wide text-yellow-800 capitalize align-top ${currentProductDisplay ?'animate-fadeIn':'transform translate-x-[-100%]'} md:text-center`}>get up to 50% off on {currentProductDisplay?.name}</h2>
-    <button className="bg-yellow-200 cursor-pointer hover:text-white hover:bg-yellow-500 rounded-lg py-2 px-10 w-[max-content] text-yellow-700 text-md font-bold capitalize">buy now</button>
+    <div className="flex flex-col gap-8 justify-between md:items-center flex-[1.5] min-w-[15rem] overflow-hidden">
+    <h2 className={`text-2xl font-extrabold tracking-wide text-yellow-800 capitalize align-top ${currentProductDisplay?.name && isLoading ?'animate-fadeIn':'transform translate-x-[-100%]'}  md:text-center mt-4`}>get up to 50% off on {currentProductDisplay?.name}</h2>
+    { isLoading &&<button className="bg-yellow-200 cursor-pointer hover:text-white hover:bg-yellow-500 rounded-lg py-2 px-10 w-[max-content] text-yellow-700 text-md font-bold capitalize">buy now</button>}
     </div>
     <div className="w-[10rem] h-[11rem] min-w-[11rem] rounded-full bg-gradient-to-r from-orange-500 to-amber-500 flex justify-start overflow-hidden p-5">
-            {currentProductDisplay && <img src={currentProductDisplay?.image} ref={imageRef} onLoad={() => {
-              setIsLoading(imageRef.current?.complete)
-            }} alt="headphone" className={`w-full h-full img animate-fadeIn_bounce ${isLoading ? 'opacity-100':'opacity-0'}`} />}
+      {
+      productsPanelData?.map(({image},i) => (
+      <img src={image} alt="headphone" key={i} className={`w-full h-full img ${isLoading && currentProductDisplay?.image === image ? 'animate-fadeIn_bounce' : 'hidden'} images_banner`} />
+      ))
+      }
     </div>
     </div>
     <div className="flex items-center justify-center gap-2 mt-8">
-    <span className="w-4 h-4 rounded-full bg-amber-500 animate-stretch"></span>
-    <span className="w-4 h-4 rounded-full bg-amber-500"></span>
-    <span className="w-4 h-4 rounded-full bg-amber-500"></span>
-    <span className="w-4 h-4 rounded-full bg-amber-500"></span>
+    {
+      productsPanelData?.map(({id}) => (
+        <span className="w-4 h-4 rounded-full bg-amber-500 md_1:w-3 md_1:h-3" key={id} onClick={sliderClick}></span>
+      ))
+    }
     </div>
     </div>
     <div className="flex items-center hidden gap-3 mt-8">
