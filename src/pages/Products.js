@@ -4,62 +4,120 @@ import { useGlobalContext } from '../lib/context';
 import logo from '../assests/logo (1).png';
 import { FaSearch } from 'react-icons/fa';
 import Pagination from '../components/Pagination';
+
+
 const Products = ({products,productsPanelData}) => {
   // const {searchTerm } nb= useGlobalContext();
     const [currentPage, setCurrentPage] = useState(1); 
-    const [isLoading, setIsLoading] = useState(false); 
     const postsPerPage = 10;
     const indexofLastPage = currentPage * postsPerPage;
     const indexofFirstPage = indexofLastPage - postsPerPage;
     const currentPosts = products?.slice(indexofFirstPage, indexofLastPage);
     const totalPages = products?.length;
-  let index = 0;
+    let index = 0;
   const [currentProductDisplay, setCurrentProductDisplay] = useState({});
   
-  // console.log(currentProductDisplay,productsPanelData);
   useEffect(() => {
-    // setCurrentProductDisplay(productsPanelData?.[index]);
-    // console.log(currentProductDisplay,productsPanelData);
-    // console.log(isLoading);
-    // console.log('effect run');
     
     let interval;
-    if (!isLoading) {
-      window.addEventListener('load', () => {
-        let img = [...document.querySelectorAll('.images_banner')];
-      // console.log(img);
-      if (img.every((item) => item.complete)) {
-        setIsLoading(true);
-          // img.map((item)=>item.classList.add(``))
-      }
-    });
-  }
-  if (isLoading) {
-    interval = setInterval(() => {
-      if (index >= productsPanelData?.length) {
-      index = 0;
+    let timeout_1;
+    function intervalFunction() {
+      clearTimeout(timeout_1);
+        if (index >= productsPanelData?.length) {
+          index = 0;
+        }
+        setCurrentProductDisplay(productsPanelData?.[index])
+        index++;
+       timeout_1= setTimeout(() => {
+          setCurrentProductDisplay(null)
+        },8000)    
     }
-    setCurrentProductDisplay(productsPanelData?.[index])
-    index++;
-    setTimeout(() => {
+      interval = setInterval(() => {
+        intervalFunction()
+      }, 9000)
+    
+    let timeout;
+    function changeSlide(id) {
+      clearTimeout(timeout)
+      clearInterval(interval);
       setCurrentProductDisplay(null)
-      // console.log('tu')
-    },8000)    
-  },9000)
+      timeout = setTimeout(() => {
+        index = id;
+        intervalFunction()
+        interval = setInterval(() =>intervalFunction(),9000)
+      }, 1000)
     }
+    document.querySelectorAll('.slider_button').forEach((slider) => {
+      slider.addEventListener('click', () => {
+        changeSlide(slider.id)
+             
+      })
+    });
+    document.getElementById('swipe_able').addEventListener("touchstart", startTouch);
+    document.getElementById('swipe_able').addEventListener("touchend", moveTouch);
+ 
+// Swipe Up / Down / Left / Right
+let initialX = null;
+let initialY = null;
+ 
+function startTouch(e) {
+  initialX = e.touches[0].clientX;
+  initialY = e.touches[0].clientY;
+};
+ 
+function moveTouch(e) {
+  if (initialX === null) {
+    return;
+  }
+ 
+  if (initialY === null) {
+    return;
+  }
+ 
+  // let currentX = e.touches[0].clientX;
+  // let currentY = e.touches[0].clientY;
+  // console.log('X : '+initialX +' - ' +currentX)
+  // console.log('Y : '+initialY +' - ' +currentY)
+ 
+  // let diffX = initialX - currentX;
+  // let diffY = initialY - currentY;
+  // console.log(diffX)
+ 
+  // if (Math.abs(diffX) > Math.abs(diffY)) {
+  //   // sliding horizontally
+  //   if (diffX > 25) {
+  //     // swiped left
+  //     console.log("swiped left");
+  //   }
+  //   if (diffX < -25) {
+  //     // swiped right
+  //     console.log("swiped right");
+  //   }  
+  // } else {
+  //   // sliding vertically
+  //   if (diffY > 0) {
+  //     // swiped up
+  //     console.log("swiped up");
+  //   } else {
+  //     // swiped down
+  //     console.log("swiped down");
+  //   }  
+  // }
+ 
+  // initialX = null;
+  // initialY = null;
+   
+  // e.preventDefault();
+};
     
     return () => {
-    clearInterval(interval)
-    // imageRef.current?.removeEventListener('load', () => {
-      //   console.log(imageRef.current?.complete);
-      //   setIsLoading(imageRef.current?.complete && imageRef.current?.naturalHeight)
-      // });
+      clearInterval(interval)
+      document.querySelectorAll('.slider_button').forEach((slider) => {
+        slider.removeEventListener('click',()=>changeSlide(slider.id))
+      })
     };
-  }, [isLoading])
+  }, [productsPanelData])
   
- const sliderClick = () => {
-   console.log('clik');
-  }
   return (
     <div className='w-[95vw] mx-auto pt-[8rem]'>
       <div className="flex items-center justify-center w-full mb-8">
@@ -70,24 +128,24 @@ const Products = ({products,productsPanelData}) => {
       <FaSearch/>
       </span>
       </div>
-    <div className="w-full px-10 xs:px-4 pb-8 bg-yellow-400 pt-14">
+    <div className="w-full px-10 xs:px-4 pb-8 bg-yellow-400 pt-14" id='swipe_able'>
     <div className="flex justify-center gap-[3rem] flex-wrap">
     <div className="flex flex-col gap-8 justify-between md:items-center flex-[1.5] min-w-[15rem] overflow-hidden">
-    <h2 className={`text-2xl font-extrabold tracking-wide text-yellow-800 capitalize align-top ${currentProductDisplay?.name && isLoading ?'animate-fadeIn':'transform translate-x-[-100%]'}  md:text-center mt-4`}>get up to 50% off on {currentProductDisplay?.name}</h2>
-    { isLoading &&<button className="bg-yellow-200 cursor-pointer hover:text-white hover:bg-yellow-500 rounded-lg py-2 px-10 w-[max-content] text-yellow-700 text-md font-bold capitalize">buy now</button>}
+    <h2 className={`text-2xl font-extrabold tracking-wide text-yellow-800 capitalize align-top ${currentProductDisplay?.name ?'animate-fadeIn':'transform translate-x-[-100%]'}  md:text-center mt-4`}>get up to 50% off on {currentProductDisplay?.name}</h2>
+   <button className="bg-yellow-200 cursor-pointer hover:text-white hover:bg-yellow-500 rounded-lg py-2 px-10 w-[max-content] text-yellow-700 text-md font-bold capitalize">buy now</button>
     </div>
     <div className="w-[10rem] h-[11rem] min-w-[11rem] rounded-full bg-gradient-to-r from-orange-500 to-amber-500 flex justify-start overflow-hidden p-5">
       {
       productsPanelData?.map(({image},i) => (
-      <img src={image} alt="headphone" key={i} className={`w-full h-full img ${isLoading && currentProductDisplay?.image === image ? 'animate-fadeIn_bounce' : 'hidden'} images_banner`} />
+      <img src={image} alt="headphone" key={i} className={`w-full h-full img ${currentProductDisplay?.image === image ? 'animate-fadeIn_bounce' :'hidden'} images_banner`} />
       ))
       }
     </div>
     </div>
     <div className="flex items-center justify-center gap-2 mt-8">
     {
-      productsPanelData?.map(({id}) => (
-        <span className="w-4 h-4 rounded-full bg-amber-500 md_1:w-3 md_1:h-3" key={id} onClick={sliderClick}></span>
+      productsPanelData?.map(({id},i) => (
+        <span className={`slider_button w-4 h-4 rounded-full ${id ===currentProductDisplay?.id ?'bg-orange-500':'bg-amber-500'} md_1:w-3 md_1:h-3`} key={id} id={i}></span>
       ))
     }
     </div>

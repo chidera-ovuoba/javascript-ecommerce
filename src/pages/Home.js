@@ -27,8 +27,7 @@ const Home = ({ productsPanelData, products }) => {
 return (
 <div> 
 <div className='grid place-items-center pt-32'>
-<SearchResults/>
-<Products products={products}/>
+
 </div>
 
 </div>
@@ -38,5 +37,6 @@ return (
 // <ProductsPanel productsPanelData={productsPanelData} />
 // <ProductSection/>
 // <Testimonial/>
+// <SearchResults/>
 
 export default Home

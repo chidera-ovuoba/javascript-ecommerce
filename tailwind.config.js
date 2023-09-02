@@ -43,8 +43,9 @@ module.exports = {
         }
         },
         animation: {
-        'stretch': 'stretch 1s ease infinite alternate both',
-        'fadeIn': 'fadeIn 8s ease forwards',
+        'stretch_out': 'stretch 1s ease forwards',
+        'stretch_in': 'stretch 1s ease alternate forwards ',
+        'fadeIn': 'fadeIn 8s ease',
         'fadeIn_bounce':'fadeIn 8s ease ,bounce_light 1.5s infinite cubic-bezier(.5,20,.5,-20) '
         }
         
